@@ -1,9 +1,10 @@
+const { readdirSync } = require("fs");
 const db = require("../models");
 const Post = db.posts;
 const User = db.users;
 
 exports.deletePost = (req, res, next) => {
-  // nous utilisons l'ID que nous recevons comme paramètre pour accéder au post correspondant dans la base de données
+ 
   Post.findOne({ where: { id: req.params.id } });
 
   Post.destroy({ where: { id: req.params.id } })
@@ -27,11 +28,9 @@ exports.createPost = (req, res, next) => {
 };
 
 exports.findAllPostUser = (req, res, next) => {
-   Post.findAll({
-    order: [["createdAt", "DESC"]],
-    include: {
-      model: User,
-    },
+   return Post.findAll({
+   // order: [["createdAt", "DESC"]],
+    include: ["user"],
     where: { userId: req.params.userId },
   })
     .then((post) => res.status(200).json(post))
@@ -39,11 +38,8 @@ exports.findAllPostUser = (req, res, next) => {
 };
 
 exports.getAllPosts = (req, res, next) => {
-  Post.findAll({
-    order: [["createdAt", "DESC"]],
-    include: {
-      model: User,
-    },
+  return Post.findAll({
+    include: [ "user"],
   })
     .then((posts) => {
       return res.status(200).json(posts);
@@ -53,34 +49,27 @@ exports.getAllPosts = (req, res, next) => {
     });
 };
 
-exports.modifyPost = (req, res) => {
-  Post.findOne({ where: { id: req.params.postId } })
-    .then((post) => {
-      if (!post) {
-        res.status(404).json({
-          error: "No such Post!",
+
+
+exports.updatePost = (req, res, next) => {
+  const id = req.params.id;
+    Post.update( req.body,{
+      where: { userId: id }
+    })
+    .then(num => {
+      if (num == 1) {
+      res.send({
+        message: "post mise a jour "
+      });
+      } else {
+        res.send({
+          message: "impossible de mettre a jour le post n'existe pas"
         });
-      } else if (
-        post.userId !== req.auth.userId &&
-        req.auth.userRole !== "admin"
-      ) {
-        res.status(403).json({
-          error: "Unauthorized request!",
-        });
-      
-      } else if (!req.file) {
-        const postToUpdate = post;
-        postToUpdate
-          .update({
-            title: req.body.title,
-          })
-          .then(() =>
-            res
-              .status(201)
-              .json("Post modifié avec succès ")
-          )
-          .catch((error) => res.status(501).json(error));
       }
     })
-    .catch((error) => res.status(502).json({ error }));
-};
+    .catch(err => {
+      res.status(500).send({
+        message: "errror"
+      });
+    });
+  };

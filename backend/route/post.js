@@ -1,16 +1,19 @@
 const express = require('express');
 const router = express.Router();
+/*const auth = require('../middleware/auth');*/
 
 
 const postCtrl=require('../controllers/post');
-const auth = require('../middleware/auth');
 
-router.get('/',postCtrl.getAllPosts);
 
-router.post('/post', postCtrl.createPost);
+router.get('/'/*,auth*/ ,postCtrl.getAllPosts);
 
-router.get('/:userId',postCtrl.findAllPostUser);
+router.post('/post' /*,auth*/ , postCtrl.createPost);
 
-router.delete('/:id',auth, postCtrl.deletePost );
+router.get('/:userId'/*,auth*/ ,postCtrl.findAllPostUser);
+
+router.delete('/:id'/*,auth*/, postCtrl.deletePost );
+
+router.put('/:id' /*,auth*/, postCtrl.updatePost );
 
 module.exports = router;
