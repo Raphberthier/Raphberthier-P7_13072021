@@ -78,7 +78,7 @@ export default {
      font-family: 'Comic Sans MS', cursive;
 }
 h1{
-    font-family: 'Comic Sans MS', cursive;
+    font-family: 'Rowdies', cursive;
     color:black;
 }
 .card{

@@ -1,14 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const auth = require('../middleware/auth');
+const commentCtrl = require("../controllers/comment");
 
-const commentCtrl=require('../controllers/comment');
-
-router.post('/',commentCtrl.createComment);
+router.post("/", commentCtrl.createComment);
 
 //requete pour ciblé et afficher un element grace a son id
-router.get('/:postId',commentCtrl.getAllComments);
+router.get("/:postId",auth , commentCtrl.getAllComments);
 
 //requete pour supprimer un objet existant
-router.delete('/:id',commentCtrl.deleteComment );
+router.delete("/:id",auth , commentCtrl.deleteComment);
 
-module.exports = router; 
+module.exports = router;

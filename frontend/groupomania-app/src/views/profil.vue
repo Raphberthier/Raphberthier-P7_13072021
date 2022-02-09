@@ -77,10 +77,12 @@ methods:{
                axios.delete("http://localhost:3000/api/users/" + userId, {
                     headers: { Authorization: "Bearer " + sessionStorage.token },
                })
-                    .then((response) => console.log(response))
-                    .catch((err) => console.log(err));
+                    .then((res) => console.log(res))
                     sessionStorage.clear();
                     this.$router.push("/")
+                    .catch((err) => console.log(err));
+                    
+                    
               
           },
 }
@@ -99,7 +101,7 @@ h1{
   display: flex;
   justify-content: center;
   color:black;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: 'Rowdies', cursive;
 }
 .card {
     background-color: #b6b3b3;

@@ -55,6 +55,7 @@ export default {
       title: "",
       message: "",
       firstName:"",
+      lastName: "",
     };
   },
   created() {
@@ -146,7 +147,7 @@ body {
   font-family: "Comic Sans MS";
 }
 h1 {
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: 'Rowdies', cursive;
   color: black;
 }
 .line-color{

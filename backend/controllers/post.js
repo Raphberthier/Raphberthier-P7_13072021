@@ -1,26 +1,33 @@
 const { readdirSync } = require("fs");
 const db = require("../models");
+const post = require("../models/post");
+const user = require("../models/user");
 const Post = db.posts;
 const User = db.users;
 
-exports.deletePost = (req, res, next) => {
- 
-  Post.findOne({ where: { id: req.params.id } });
 
-  Post.destroy({ where: { id: req.params.id } })
-    .then(() => res.status(200).json({ message: "post supprimé !" }))
-    .catch((error) => res.status(400).json({ error }));
+exports.deletePost = (req, res, next) => {
+  Post.findOne({ where: { id: req.params.id } })
+  .then((post) => {
+    const postUserId = post.userId;
+    if (req.token === postUserId) {
+      Post.destroy({ where: { id: req.params.id } })
+        .then(() => res.status(200).json({ message: "post supprimé !" }))
+        .catch((error) => res.status(400).json({ error }));
+    } else {
+      res.status(400).json({ error: "Vous n'avait pas la permission" });
+    }
+  });
 };
 
 exports.createPost = (req, res, next) => {
   Post.create({
-   
     userId: req.body.userId,
     content: req.body.content,
     title: req.body.title,
   })
 
-    .then((post) => res.status(201).json(post)) 
+    .then((post) => res.status(201).json(post))
     .catch((error) => {
       console.log(error);
       res.status(500).json(error);
@@ -28,8 +35,8 @@ exports.createPost = (req, res, next) => {
 };
 
 exports.findAllPostUser = (req, res, next) => {
-   return Post.findAll({
-   // order: [["createdAt", "DESC"]],
+  return Post.findAll({
+    // order: [["createdAt", "DESC"]],
     include: ["user"],
     where: { userId: req.params.userId },
   })
@@ -39,7 +46,7 @@ exports.findAllPostUser = (req, res, next) => {
 
 exports.getAllPosts = (req, res, next) => {
   return Post.findAll({
-    include: [ "user"],
+    include: ["user"],
   })
     .then((posts) => {
       return res.status(200).json(posts);
@@ -49,27 +56,33 @@ exports.getAllPosts = (req, res, next) => {
     });
 };
 
-
-
 exports.updatePost = (req, res, next) => {
-  const id = req.params.id;
-    Post.update( req.body,{
-      where: { userId: id }
+  Post.findOne({ where: { id: req.params.id } })
+  .then((post) => {
+    const postUserId = post.userId;
+    if (req.token === postUserId) {
+    const id = req.params.id;
+    Post.update(req.body, {
+      where: { id: id },
     })
-    .then(num => {
-      if (num == 1) {
-      res.send({
-        message: "post mise a jour "
-      });
-      } else {
-        res.send({
-          message: "impossible de mettre a jour le post n'existe pas"
+      .then((num) => {
+        if (num == 1) {
+          res.send({
+            message: "post mise a jour ",
+          });
+        } else {
+          res.send({
+            message: "impossible de mettre a jour le post n'existe pas",
+          });
+        }
+      })
+
+      .catch((err) => {
+        res.status(500).send({
+          message: "errror",
         });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "errror"
       });
-    });
-  };
+  } else {
+    res.status(400).json({ error: "Vous n'avez pas la permission " });
+  }
+});};

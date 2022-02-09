@@ -1,23 +1,14 @@
-const jwt = require('jsonwebtoken');
-// middleware d authentification pour securiser les routes avec un token
+const jwt = require("jsonwebtoken");
+
 module.exports = (req, res, next) => {
   try {
-    
-    const token = req.headers.authorization.split(' ')[1];
-   
-    const decodedToken = jwt.verify(token, process.env.JWT_KEY);
-   
-    const userId = decodedToken.userId;
-   
-    if (req.body.userId && req.body.userId !== userId) {
-      throw 'Invalid user ID';
-    } else {
-      next();
-    }
-  } catch {
+    const token = req.headers.authorization.split(" ")[1]; // ont recupere le token dans le header de la requete
+    const decript = jwt.verify(token, process.env.JWT_KEY); // Ont verifie le token 
+    req.token = decript.userId;
+    next();
+  } catch (error) {
     res.status(401).json({
-      error: new Error('Invalid request!')
+      error,
     });
   }
-  next();
 };

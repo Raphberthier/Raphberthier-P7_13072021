@@ -1,38 +1,47 @@
 const bcrypt = require("bcrypt");
-const mailValidator = require("email-validator"); //mid
 var passwordValidator = require("password-validator");
 const jwt = require("jsonwebtoken");
-//const models = require('../models/index.js');
-//const { users } = require('../models/index.js');
 const db = require("../models");
 const User = db.users;
 
 var schema = new passwordValidator();
 schema.is().min(8).is().max(100).has().uppercase().has().lowercase().has().digits(2).has().not().spaces().is().not().oneOf(["Passw0rd", "Password123"]);
 
-exports.signup = (req, res, next) => {
-  if (!mailValidator.validate(req.body.email) || !schema.validate(req.body.password)) {
-    throw { error: " invalide !" };
-  } else if (mailValidator.validate(req.body.email) && schema.validate(req.body.password))
-    bcrypt
-      .hash(req.body.password, 10)
-      .then((hash) => {
-        User.create({
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          email: req.body.email,
-          admin: false,
-          password: hash,
-        }).then((users) =>
-          res.status(200).json({
-            admin: users.admin,
-            userId: users.id,
-            token: jwt.sign({ userId: users.id }, process.env.JWT_KEY, { expiresIn: "24h" }),
-          })
-        );
-      })
-      .catch((error) => res.status(500).json({ error }));
+exports.signup = (req, res) => {
+  let password = req.body.password;
+  if (req.body.email == null || req.body.lastName == null || req.body.firstName == null || password == null) {
+    res.status(400).json({ error: "Tous les champs sont obligatoires" });
+  }
+
+  User.findOne({
+    attributes: ["email"],
+    where: { email: req.body.email },
+  }).then((user) => {
+    if (!user) {
+      bcrypt
+        .hash(req.body.password, 10)
+        .then((hash) => {
+          User.create({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            admin: false,
+            password: hash,
+          }).then((users) =>
+            res.status(200).json({
+              admin: users.admin,
+              userId: users.id,
+              token: jwt.sign({ userId: users.id }, process.env.JWT_KEY, { expiresIn: "24h" }),
+            })
+          );
+        })
+        .catch((error) => res.status(500).json({ error }));
+    } else {
+      res.status(400).json({ error: "Cet utilisateur existe déjà" });
+    }
+  });
 };
+
 exports.login = (req, res, next) => {
   User.findOne({
     where: { email: req.body.email },
@@ -57,22 +66,23 @@ exports.login = (req, res, next) => {
 };
 
 exports.deleteUser = (req, res, next) => {
-  // test user id
   User.findOne({ where: { id: req.params.id } })
-    .then(() => {
-      models.users
-        .destroy({ where: { id: req.params.id } })
-        .then((user) => res.status(200).json(user)({ message: "Compte supprimé" }))
+  .then((user) => {
+    const delUserId = user.id;
+    if (req.token === delUserId) {
+      User.destroy({ where: { id: req.params.id } })
+        .then(() => res.status(200).json({ message: "Compte supprimé !" }))
         .catch((error) => res.status(400).json({ error }));
-    })
-    .catch((error) => res.status(500).json({ error }));
+    } else {
+      res.status(400).json({ error: "Vous n'avait pas la permission" });
+    }
+  });
 };
 
 exports.getOneUser = (req, res, next) => {
-  User.findOne
-  ({ where: { id: req.params.id }})
-      .then((user) => res.status(200).json(user))
-      .catch(error => res.status(404).json({ error }));
+  User.findOne({ where: { id: req.params.id } })
+    .then((user) => res.status(200).json(user))
+    .catch((error) => res.status(404).json({ error }));
 };
 
 exports.getAllUsers = (req, res, next) => {
@@ -82,24 +92,32 @@ exports.getAllUsers = (req, res, next) => {
 };
 
 exports.updateUser = (req, res, next) => {
-  try {
-    User.update(
-      {
-        email: req.body.email,
-      },
-      {
-        where: {
-          id: req.params.id,
+  User.findOne({ where: { id:req.params.id} })
+  .then((user) => {
+  const userId = user.id;
+  if (req.token === userId) {
+    try {
+      User.update(
+        {
+          email: req.body.email,
         },
-      }
-    );
+        {
+          where: {
+            id: req.params.id,
+          },
+        }
+      );
 
-    return res.status(200).send({
-      message: "email modifiée",
-    });
-  } catch (err) {
-    return res.status(500).json(err);
+      return res.status(200).send({
+        message: "email modifiée",
+      });
+    } catch (err) {
+      return res.status(500).json(err);
+    }
   }
+else{
+  res.status(400).json({ error: "Vous n'avait pas la permission" });
+}})
 };
 
 exports.findPostCom = (req, res, next) => {

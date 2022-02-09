@@ -126,10 +126,10 @@ export default {
             sessionStorage.setItem("token", responseToken);
             this.$router.push("perso");
           })
-          .catch(() => {
+          .catch((status) => {
+            let message = JSON.stringify((status.response.data.error));
             {
-              this.errorMessage = `"Votre mot de passe doit contenir min 8 caractères"
-                              "1 maj et 2 chiffres"`;
+              this.errorMessage = message;
             }
           });
       }
