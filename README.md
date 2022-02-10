@@ -20,11 +20,30 @@ App running at:
   
   <h2>DANS LE DOSSIER BACKEND</h2>
 <p>Ouvrez le fichier " .env.example " : vous devez assigner des valeurs aux variables suivantes:
+  <br>
+  <br>
 SQL_DATABASE_NAME= Nom de la dataBase
+  <br>
+  <br>
 SQL_USER =  Nom de l'utilisateur
+  <br>
+  <br>
 SQL_PASSWORD = Mot de passe pour la dataBase
+  <br>
+  <br>
 JWT_KEY = Clef de securiter pour le token (variable de votre choix).
-
+<br>
+<br>
+PORT = (3000)
+<br>
+<br>
+DB_DIALECT = (mysql)
+<br>
+<br>
+DB_HOST= 
+  
+  <br>
+  <br>
 Renommer ce dossier " .env " à la place de " .env.initial ".
 Ouvrez un troisième terminal (assurez vous de bien être dans le dossier backend)
 
