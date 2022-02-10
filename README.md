@@ -16,7 +16,9 @@ npm run serve
 Vous aurez un message similaire à celui-ci :
 <br>
 App running at:
+  <br>
   - Local:   http://localhost:8080/ 
+  <br>
   - Network: http://192.168.1.109:8080/</p>
   
   <h2>DANS LE DOSSIER BACKEND</h2>
