@@ -19,7 +19,7 @@ App running at:
   <br>
   - Local:   http://localhost:8080/ 
   <br>
-  - Network: http://192.168.1.109:8080/</p>
+  - Network: http://192.168.1.36:8080/</p>
   
   <h2>DANS LE DOSSIER BACKEND</h2>
 <p>Ouvrez le fichier " .env.example " : vous devez assigner des valeurs aux variables suivantes:
