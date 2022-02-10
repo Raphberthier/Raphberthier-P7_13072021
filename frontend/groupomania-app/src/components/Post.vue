@@ -16,6 +16,7 @@
       <h2 class="title">Sujet :</h2>
       <p class="content" >{{ post.content }}</p>
       <input id="post.content" v-if="post.userId === user.id || user.admin === true" v-model="post.content" />
+      <div class="msg"> {{ errorMessage }}</div>
     </div>
     <div class="mt-2 d-flex justify-content-end">
       <button class="btn btn-primary btn-sm ms-1" v-if="post.userId === user.id || user.admin === true" @click="modifyPost">Modifier</button>
@@ -53,6 +54,7 @@
   </main>
 </template>
 <script>
+
 import axios from "axios";
 export default {
   name: "Post",
@@ -126,6 +128,7 @@ export default {
           (this.content = response.content), (this.title = response.title);
         })
         .catch((err) => console.log(err));
+        
     },
 
     deletePostEvent() {

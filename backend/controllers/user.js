@@ -69,7 +69,7 @@ exports.deleteUser = (req, res, next) => {
   User.findOne({ where: { id: req.params.id } })
   .then((user) => {
     const delUserId = user.id;
-    if (req.token === delUserId) {
+    if (req.token === delUserId || user.admin === true) {
       User.destroy({ where: { id: req.params.id } })
         .then(() => res.status(200).json({ message: "Compte supprimé !" }))
         .catch((error) => res.status(400).json({ error }));
@@ -81,6 +81,7 @@ exports.deleteUser = (req, res, next) => {
 
 exports.getOneUser = (req, res, next) => {
   User.findOne({ where: { id: req.params.id } })
+  
     .then((user) => res.status(200).json(user))
     .catch((error) => res.status(404).json({ error }));
 };
@@ -95,7 +96,7 @@ exports.updateUser = (req, res, next) => {
   User.findOne({ where: { id:req.params.id} })
   .then((user) => {
   const userId = user.id;
-  if (req.token === userId) {
+  if (req.token === userId || user.admin === true ) {
     try {
       User.update(
         {
