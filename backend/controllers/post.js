@@ -8,7 +8,7 @@ const User = db.users;
 exports.deletePost = (req, res, next) => {
   Post.findOne({ where: { id: req.params.id } }).then((post) => {
     const postUserId = post.userId;
-    if (req.token === postUserId || user.admin === true) {
+    if (req.token === postUserId  || req.admin === true) {
       Post.destroy({ where: { id: req.params.id } })
         .then(() => res.status(200).json({ message: "post supprimé !" }))
         .catch((error) => res.status(400).json({ error }));
@@ -58,7 +58,7 @@ exports.updatePost = (req, res, next) => {
   Post.findOne({ where: { id: req.params.id } })
   .then((post) => {
     const postUserId = post.userId;
-    if (req.token === postUserId || user.admin === true) {
+    if (req.token === postUserId || req.admin === true) {
       const id = req.params.id;
       Post.update(req.body, {
         where: { id: id },

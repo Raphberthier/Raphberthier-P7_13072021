@@ -13,10 +13,10 @@ exports.signup = (req, res) => {
     res.status(400).json({ error: "Tous les champs sont obligatoires" });
   }
 
-  User.findOne({
+  User.findOne({                      //Ont verifie si l'email existe deja dans la DB
     attributes: ["email"],
     where: { email: req.body.email },
-  }).then((user) => {
+  }).then((user) => {                 // si il existe pas ont cree l'utilisateur
     if (!user) {
       bcrypt
         .hash(req.body.password, 10)
@@ -31,12 +31,12 @@ exports.signup = (req, res) => {
             res.status(200).json({
               admin: users.admin,
               userId: users.id,
-              token: jwt.sign({ userId: users.id }, process.env.JWT_KEY, { expiresIn: "24h" }),
+              token: jwt.sign({ userId: users.id, admin: users.admin }, process.env.JWT_KEY, { expiresIn: "24h" }),
             })
           );
         })
         .catch((error) => res.status(500).json({ error }));
-    } else {
+    } else {                          //si l'email est deja inscrit dans la DB ont affiche un message d'erreur
       res.status(400).json({ error: "Cet utilisateur existe déjà" });
     }
   });
@@ -58,7 +58,7 @@ exports.login = (req, res, next) => {
         res.status(200).json({
           admin: users.admin,
           userId: users.id,
-          token: jwt.sign({ userId: users.id }, process.env.JWT_KEY, { expiresIn: "24h" }),
+          token: jwt.sign({ userId: users.id, admin: users.admin }, process.env.JWT_KEY, { expiresIn: "24h" }),
         });
       })
       .catch((error) => res.status(500).json({ error }));

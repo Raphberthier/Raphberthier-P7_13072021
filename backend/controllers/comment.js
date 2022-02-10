@@ -1,23 +1,21 @@
-const models = require("../models/index.js");
+
 const db = require("../models");
 const User = db.users;
 const Comment = db.comments;
 
-exports.deleteComment = (req, res, next) => {
-  
- Comment.findOne({ where: {id: req.params.id}})
- .then((comment) => {
-   const commentUserId = comment.userId;
-   if (req.token === commentUserId) {
-     Comment.destroy({ where: { id: req.params.id}})
-     .then(() => res.status(200).json({ message: "commentaire supprimé !"}))
-     .catch((error) => res.statuse(400).json({ error}));
-   }
-   else {
-     res.status(400).json({ error: "Vous n'avait pas la permission" });
-   }
- });
+exports.deleteComment = (req, res, next) => {                                       
+  Comment.findOne({ where: { id: req.params.id } }).then((comment) => {           // recuperation de l'id du createur du commentaire 
+    const commentUserId = comment.userId;
+    if (req.token === commentUserId || req.admin === true ) {                    // Si l'userId de la requete et le meme que le createur du commentaire 
+      Comment.destroy({ where: { id: req.params.id } })                           // ont supprime le commentaire avec son id
+        .then(() => res.status(200).json({ message: "commentaire supprimé !" }))
+        .catch((error) => res.statuse(400).json({ error }));
+    } else {                                                                      // Sinon ont renvoie une erreur 
+      res.status(400).json({ error: "Vous n'avait pas la permission" });
+    }
+  });
 };
+
 exports.createComment = (req, res, next) => {
   Comment.create({
     postId: req.body.postId,
