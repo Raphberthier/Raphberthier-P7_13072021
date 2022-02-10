@@ -47,7 +47,7 @@ DB_HOST=
   
   <br>
   <br>
-Renommer ce dossier " .env " à la place de " .env.initial ".
+Renommer ce dossier " .env " à la place de " .env.example ".
 Ouvrez un troisième terminal (assurez vous de bien être dans le dossier backend)
 
 Puis faites:
