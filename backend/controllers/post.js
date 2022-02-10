@@ -1,22 +1,9 @@
 
 const db = require("../models");
-const post = require("../models/post");
-const user = require("../models/user");
 const Post = db.posts;
-const User = db.users;
 
-exports.deletePost = (req, res, next) => {
-  Post.findOne({ where: { id: req.params.id } }).then((post) => {
-    const postUserId = post.userId;
-    if (req.token === postUserId  || req.admin === true) {
-      Post.destroy({ where: { id: req.params.id } })
-        .then(() => res.status(200).json({ message: "post supprimé !" }))
-        .catch((error) => res.status(400).json({ error }));
-    } else {
-      res.status(400).json({ error: "Vous n'avait pas la permission" });
-    }
-  });
-};
+
+// CREATION DU POST
 
 exports.createPost = (req, res, next) => {
   Post.create({
@@ -31,17 +18,17 @@ exports.createPost = (req, res, next) => {
       res.status(500).json(error);
     });
 };
-
+// RECUPERE TOUT LES POST D'UN USER
 exports.findAllPostUser = (req, res, next) => {
-  return Post.findAll({
-    // order: [["createdAt", "DESC"]],
+  
+  Post.findAll({
     include: ["user"],
     where: { userId: req.params.userId },
   })
     .then((post) => res.status(200).json(post))
     .catch((error) => res.status(500).json(error));
 };
-
+// RECUPERE TOUT LES POSTS
 exports.getAllPosts = (req, res, next) => {
   return Post.findAll({
     include: ["user"],
@@ -53,7 +40,7 @@ exports.getAllPosts = (req, res, next) => {
       return res.status(500).json({});
     });
 };
-
+// MODIFICATION DU POST
 exports.updatePost = (req, res, next) => {
   Post.findOne({ where: { id: req.params.id } })
   .then((post) => {
@@ -85,3 +72,22 @@ exports.updatePost = (req, res, next) => {
     }
   });
 };
+// SUPPRESSION DU POST
+          
+exports.deletePost = (req, res, next) => {
+  Post.findOne({ where: { id: req.params.id } }).then((post) => {
+    const postUserId = post.userId;
+    if (req.token === postUserId  || req.admin === true) {
+      Post.destroy({ where: { id: req.params.id } })
+        .then(() => res.status(200).json({ message: "post supprimé !" }))
+        .catch((error) => res.status(400).json({ error }));
+    } else {
+      res.status(400).json({ error: "Vous n'avait pas la permission" });
+    }
+  });
+};        
+
+        
+     
+    
+

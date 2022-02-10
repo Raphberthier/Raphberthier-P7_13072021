@@ -36,7 +36,7 @@
         </div>
         <div class="com d-flex justify-content-between">
           <p class="content">{{ comment.comment }}</p>
-          <button class="btn btn-outline-secondary btn-sm" @click.prevent="deleteCom(comment)">
+          <button class="btn btn-outline-secondary btn-sm"  v-if="comment.userId === user.id || user.admin === true" @click.prevent="deleteCom(comment)">
             <span class="trash"><i class="fas fa-trash"></i></span>
           </button>
         </div>
