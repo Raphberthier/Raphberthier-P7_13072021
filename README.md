@@ -11,9 +11,10 @@ et @ vue / cli  pour le frontend. Vous devrez avoir Node, MySQL et Vue CLI insta
 <p>Ouvrez un premier terminal et faites:
 npm install
 puis une fois l'installation terminée:
+  <br>
 npm run serve
 Vous aurez un message similaire à celui-ci :
-
+<br>
 App running at:
   - Local:   http://localhost:8080/ 
   - Network: http://192.168.1.109:8080/</p>
